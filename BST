@@ -1,0 +1,114 @@
+class Node:
+    
+    def __init__(self, key):
+        self.key = key
+        self.lc = None  
+        self.rc = None  
+
+
+def insert(root, key):
+    if root is None:
+        return Node(key)
+    
+    if key < root.key:
+        root.lc = insert(root.lc, key)
+    elif key > root.key:
+        root.rc = insert(root.rc, key)
+    return root
+
+def inorder(root):
+    if root:
+        inorder(root.lc)
+        print(root.key, end=" ")
+        inorder(root.rc)
+
+def Search(root, key):
+    if root is None or root.key == key:
+        return root
+    if key < root.key:
+        return Search(root.lc, key)
+    return Search(root.rc, key)
+
+def minValueNode(node):
+    current = node
+    while current.lc is not None:
+        current = current.lc
+    return current
+
+def Delete(root, key):
+
+    if root is None:
+        return root 
+    if key < root.key:
+        root.lc = Delete(root.lc, key)
+    elif key > root.key:
+        root.rc = Delete(root.rc, key)
+
+    else:
+        if root.lc is None:
+            temp = root.rc
+            return temp
+        elif root.rc is None:
+            temp = root.lc
+            return temp
+        temp = minValueNode(root.rc)
+      
+        root.key = temp.key
+        
+        root.rc = Delete(root.rc, temp.key)
+    return root
+
+root = None
+print("BST Implementation")
+
+while True:
+    print("\n--- MENU ---")
+    print("1. Insert Node")
+    print("2. Search Key")
+    print("3. Delete Key")
+    print("4. Display (Inorder)")
+    print("5. Exit")
+    print("------------")
+    
+    ch = int(input("Enter your choice: "))
+
+    if ch == 1:
+            key = int(input("Enter the value to insert: "))
+            root = insert(root, key)
+            print(f"{key} successfully inserted.")
+            
+    elif ch == 2:
+            key = int(input("Enter the value to be searched: "))
+            res = Search(root, key)
+            if res:
+                print(f" {key} found in the tree.")
+            else:
+                print(f" {key} not found in the tree.")
+            
+    elif ch == 3:
+            key = int(input("Enter the key which you want to delete: "))
+            old_root = root
+            root = Delete(root, key) 
+            
+            if Search(old_root, key) is None:
+                 print(f" {key} deleted successfully.")
+            elif root is None:
+                 print(f" Tree is now empty (if it contained only {key}).")
+            else:
+                 print(f"{key} deleted (or was not present).")
+
+
+    elif ch == 4:
+        print("Inorder Traversal (Sorted order):")
+        if root:
+            inorder(root)
+            print()
+        else:
+            print("Tree is Empty.")
+    
+    elif ch == 5:
+        print("Exiting the program. Goodbye!")
+        break
+    
+    else:
+        print("**Invalid choice. Please select from 1 to 5.**")
