@@ -1,53 +1,102 @@
-class Library:
-    def __init__(self):
-        self.records=[]
-    def input_records(self):
-        n=int(input("Enter the total no. of library members:"))
-        for i in range(n):
-            count=int(input(f"Enter the no. of book borrowed by member {i+1}:"))
-            self.records.append(count)
-            print("records added successfully")
+# Global variables
+records = []
+n = 0
+
+def input_records():
+    global records, n
+    n = int(input("Enter total members: "))
+    records = [0] * n      # fixed size list
     
-    def compute_avg(self):
-        if not self.records:
-            print("no data ava")
-            return
-        avg=sum(self.records)/len(self.records)
-        print(avg)
+    for i in range(n):
+        x = int(input(f"Books borrowed by member {i+1}: "))
+        records[i] = x
     
-    def highest_lowest(self):
-        if not self.records:
-            print("no data ava")
-            return
-        print(f"highest:{max(self.records)}")
-        print(f"lowest:{min(self.records)}")
-        
-    def count_zero_borrowers(self):
-        print(f"Members with 0 books: {self.records.count(0)}")
-        
-    def find_mode(self):
+    print("Records added.")
+
+
+def compute_avg():
+    if n == 0:
+        print("No data")
+        return
+
+    total = 0
+    for i in range(n):
+        total += records[i]
+
+    avg = total / n
+    print("Average =", avg)
+
+
+def highest_lowest():
+    if n == 0:
+        print("No data")
+        return
+
+    highest = records[0]
+    lowest = records[0]
+
+    for i in range(n):
+        if records[i] > highest:
+            highest = records[i]
+        if records[i] < lowest:
+            lowest = records[i]
+
+    print("Highest =", highest)
+    print("Lowest =", lowest)
+
+
+def zero_borrowers():
+    count0 = 0
+    for i in range(n):
+        if records[i] == 0:
+            count0 += 1
+    print("Members with 0 borrowings =", count0)
+
+
+def find_mode():
+    if n == 0:
+        print("No data")
+        return
+
     freq = {}
-    for count in self.records:
-        freq[count] = freq.get(count, 0) + 1
 
-    mode = max(freq, key=freq.get)
-    print(f"Most frequent borrow count (Mode): {mode}")
-
-
-        
-def Main():
-    lib=Library()
-    while(True):
-        print("\n---- Menu ----")
-        print("1.Input  2.Avg  3.High/Low  4.Zero  5.Mode  6.Summary  7.Exit")
-        ch=int(input("Enter ur choice:"))
-        
-        if(ch==1):
-            lib.input_records()
-        elif(ch==2):
-            lib.compute_avg()
+    # build frequency table
+    for i in range(n):
+        val = records[i]
+        if val not in freq:
+            freq[val] = 1
         else:
-            print("invalid choice pls try again")
-            
-if __name__=="__main__":
-    Main()
+            freq[val] += 1
+
+    # find mode manually
+    mode = None
+    maxf = 0
+    for key in freq:
+        if freq[key] > maxf:
+            maxf = freq[key]
+            mode = key
+
+    print("Mode =", mode)
+
+
+def main():
+    while True:
+        print("\n1.Input  2.Avg  3.High/Low  4.Zero  5.Mode  6.Exit")
+        ch = int(input("Enter choice: "))
+
+        if ch == 1:
+            input_records()
+        elif ch == 2:
+            compute_avg()
+        elif ch == 3:
+            highest_lowest()
+        elif ch == 4:
+            zero_borrowers()
+        elif ch == 5:
+            find_mode()
+        elif ch == 6:
+            break
+        else:
+            print("Invalid choice")
+
+main()
