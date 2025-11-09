@@ -26,6 +26,8 @@ def process_event():
     value=event_queue[front]
     print("processing",value)
     front+=1
+    if front > rear:
+        front = rear = -1
 def display_event():
     if rear==-1 or front>rear:
         print("No event to display")
