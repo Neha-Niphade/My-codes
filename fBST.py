@@ -15,17 +15,19 @@ def inorder(root):
 def insert(root, key):
     if root is None:
         return Node(key)
+
     if key < root.key:
         root.left = insert(root.left, key)
     elif key > root.key:
         root.right = insert(root.right, key)
+
     return root
 
 
 def search(root, key):
     if root is None or root.key == key:
         return root
-    if root.key < key:
+    if key > root.key:
         return search(root.right, key)
     return search(root.left, key)
 
@@ -39,6 +41,7 @@ def get_successor(curr):
 
 def del_node(root, key):
     if root is None:
+        print("Key not found.")
         return root
 
     if key < root.key:
@@ -46,13 +49,18 @@ def del_node(root, key):
     elif key > root.key:
         root.right = del_node(root.right, key)
     else:
-        # Node found
+        # KEY FOUND → print message
+        print(f"Key {key} deleted successfully.")
+
+        # Case 1: No left child
         if root.left is None:
             return root.right
+
+        # Case 2: No right child
         elif root.right is None:
             return root.left
 
-        # Node with two children
+        # Case 3: Two children
         succ = get_successor(root)
         root.key = succ.key
         root.right = del_node(root.right, succ.key)
@@ -93,11 +101,7 @@ if __name__ == "__main__":
 
         elif choice == 4:
             key = int(input("Enter key to delete: "))
-            if search(root, key):
-                root = del_node(root, key)
-                print(f"Key {key} deleted successfully.")
-            else:
-                print(f"Key {key} not found, cannot delete.")
+            root = del_node(root, key)
 
         elif choice == 5:
             print("Exiting...")
