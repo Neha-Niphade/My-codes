@@ -1,74 +1,97 @@
-class hash_table:
-    def __init__(self,size=10):
-        self.size=size
-        self.table=[None]*size
+SIZE = 10
+table = [None] * SIZE      # None = empty, -2 = deleted
 
-    def hash_fun(self,key):
-        index=key%self.size
-        return index
-    
-    def insert(self,key):
-        index=self.hash_fun(key)
-        original=index 
-        while(self.table[index] is not None and self.table[index] != -2):
-            index=(index+1)%self.size
-            if(original==index):
-                break
-        self.table[index]=key
 
-    def display(self):
-        print("hash table")
-        for i in range (self.size):
-            if(self.table[i]==None):
-                print("empty")
-            elif self.table[i] == -2:
-                print(f"{i}: deleted")
-            else:
-                print(i,":",self.table[i])
-    def Search(self,key):
-        index = self.hash_fun(key)
-        start = index
+# ---------------- HASH FUNCTION ----------------
+def hash_fun(key):
+    return key % SIZE
 
-        while self.table[index] != None:
-            if self.table[index] == key:
-                print(f"Key {key} found at index {index}")
-                return True
-            index = (index + 1) % self.size
-            if index == start:
-                break
-        print(f"Key {key} not found")
-        return False
-    def delete(self, key):
-        index = self.hash_fun(key)
-        start = index
 
-        while self.table[index] != None:
-            if self.table[index] == key: 
-                self.table[index] = -2  
-                print(f"Key {key} deleted from index {index}")
-                return
-            index = (index + 1) % self.size
-            if index == start:
-                break
-        print(f"Key {key} not found to delete")
-size=10        
-ht=hash_table(size)
+# ---------------- INSERT ----------------
+def insert(key):
+    index = hash_fun(key)
+    start = index
+
+    while table[index] is not None and table[index] != -2:
+        index = (index + 1) % SIZE
+        if index == start:
+            print("Hash table is full!")
+            return
+
+    table[index] = key
+    print(f"Inserted {key} at index {index}")
+
+
+# ---------------- SEARCH ----------------
+def search(key):
+    index = hash_fun(key)
+    start = index
+
+    while table[index] is not None:
+        if table[index] == key:
+            print(f"Key {key} found at index {index}")
+            return True
+        index = (index + 1) % SIZE
+        if index == start:
+            break
+
+    print(f"Key {key} not found")
+    return False
+
+
+# ---------------- DELETE ----------------
+def delete(key):
+    index = hash_fun(key)
+    start = index
+
+    while table[index] is not None:
+        if table[index] == key:
+            table[index] = -2    # mark as deleted
+            print(f"Key {key} deleted from index {index}")
+            return
+        index = (index + 1) % SIZE
+        if index == start:
+            break
+
+    print(f"Key {key} not found to delete")
+
+
+# ---------------- DISPLAY ----------------
+def display():
+    print("\nHash Table:")
+    for i in range(SIZE):
+        if table[i] is None:
+            print(i, ": empty")
+        elif table[i] == -2:
+            print(i, ": deleted")
+        else:
+            print(i, ":", table[i])
+    print()
+
+
+# ---------------- MENU ----------------
 while True:
-    print("operations:1.insert 2.display 3.delete 4.Search 5.Exit\n")
-    ch=int(input("Enter your choice:"))
-    if(ch==1):
-        key=int(input("Enter key:"))
-        ht.insert(key)
-    elif(ch==2):
-        ht.display()
-    elif(ch==3):
-        key=int(input("Enter key to delete:"))
-        ht.delete(key)
-    elif(ch==4):
-        key=int(input("Enter key to search"))
-        ht.Search(key)
-    elif(ch==5):
-        print("Exiting")
+    print("\n1.Insert  2.Display  3.Delete  4.Search  5.Exit")
+    choice = int(input("Enter choice: "))
+
+    if choice == 1:
+        key = int(input("Enter key: "))
+        insert(key)
+
+    elif choice == 2:
+        display()
+
+    elif choice == 3:
+        key = int(input("Enter key to delete: "))
+        delete(key)
+
+    elif choice == 4:
+        key = int(input("Enter key to search: "))
+        search(key)
+
+    elif choice == 5:
+        print("Exiting...")
         break
+
     else:
-        print("Invalid choice")
+        print("Invalid choice!")
