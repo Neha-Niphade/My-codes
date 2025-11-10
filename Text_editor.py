@@ -1,53 +1,117 @@
-class Text_Editor:
-    def __init__(self):
-        self.undo_stack=[]
-        self.redo_stack=[]
-        
-    def make_change(self,text):
-        self.undo_stack.append(text)
-        self.redo_stack.clear()
-        print("Change saved successfully")
-        
-    def Undo(self):
-        if(len(self.undo_stack)>1):
-            last_change=self.undo_stack.pop()
-            self.redo_stack.append(last_change)
-            print("undo done")
-        else:
-            print("Nothing to undo")
-    
-    def Redo(self):
-        if (len(self.redo_stack)>1):
-            redo=self.redo_stack.pop()
-            self.undo_stack.append(redo)
-            print("redo done")
-        else:
-            print("nothing to redo")
-            
-    def Display(self):
-        if self.undo_stack:
-            print("current doc state: ",self.undo_stack[-1])
-        else:
-            print("empty")
-def Main():
-    editor=Text_Editor()
-    while(True):
-        print("Menu")
-        print("1.Make a change\n2.Undo\n3.Redo\n4.Display\n5.Exit")
-        ch=int(input("Enter choice:"))
-        if ch == 1:
-            text = input("Enter new document text: ")
-            editor.make_change(text)
-        elif ch == 2:
-            editor.Undo()
-        elif ch == 3:
-            editor.Redo()
-        elif ch == 4:
-            editor.Display()
-        elif ch == 5:
-            print("👋 Exiting program.")
-            break
-        else:
-            print("❌ Invalid choice, try again.")
-if __name__=="__main__":
-    Main()
+# -------------------------------------------
+# STACK IMPLEMENTATION (NO INBUILT FUNCTIONS)
+# -------------------------------------------
+
+undo_stack = ["" for _ in range(100)]
+redo_stack = ["" for _ in range(100)]
+
+undo_top = -1
+redo_top = -1
+
+document = ""
+
+
+# ------------------ PUSH -------------------
+def push(stack, top, value):
+    top = top + 1
+    stack[top] = value
+    return top
+
+
+# ------------------ POP --------------------
+def pop(stack, top):
+    value = stack[top]
+    top = top - 1
+    return value, top
+
+
+# ------------------ MAKE CHANGE ------------
+def make_change():
+    global document, undo_top, redo_top
+
+    # Push current doc state to undo stack
+    undo_top = push(undo_stack, undo_top, document)
+
+    # clear redo stack manually
+    redo_top = -1
+
+    change = input("Enter text to add: ")
+
+    # apply change
+    document = document + change  
+    print("Change applied.")
+
+
+# ------------------ UNDO --------------------
+def undo():
+    global document, undo_top, redo_top
+
+    if undo_top == -1:
+        print("Nothing to undo!")
+        return
+
+    # Push current state onto redo stack
+    redo_top = push(redo_stack, redo_top, document)
+
+    # Pop previous state from undo stack
+    document, undo_top = pop(undo_stack, undo_top)
+    print("Undo performed.")
+
+
+# ------------------ REDO --------------------
+def redo():
+    global document, undo_top, redo_top
+
+    if redo_top == -1:
+        print("Nothing to redo!")
+        return
+
+    # Push current state to undo stack
+    undo_top = push(undo_stack, undo_top, document)
+
+    # Pop from redo stack
+    document, redo_top = pop(redo_stack, redo_top)
+    print("Redo performed.")
+
+
+# ------------------ DISPLAY ----------------
+def display_document():
+    print("\nCurrent Document State:")
+    print("-----------------------")
+    if document == "":
+        print("[EMPTY DOCUMENT]")
+    else:
+        print(document)
+
+
+# -------------------------------------------
+# MENU SYSTEM
+# -------------------------------------------
+while True:
+    print("\n-------- MENU --------")
+    print("1. Make a Change")
+    print("2. Undo")
+    print("3. Redo")
+    print("4. Display Document")
+    print("5. Exit")
+
+    ch = int(input("Enter your choice: "))
+
+    if ch == 1:
+        make_change()
+
+    elif ch == 2:
+        undo()
+
+    elif ch == 3:
+        redo()
+
+    elif ch == 4:
+        display_document()
+
+    elif ch == 5:
+        print("Exiting...")
+        break
+
+    else:
+        print("Invalid choice! Try again.")
