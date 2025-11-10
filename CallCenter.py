@@ -1,80 +1,100 @@
-# ---------------- CALL CENTER QUEUE SIMULATION ----------------
-
-MAX = 50  # Maximum queue size
-call_queue = [None] * MAX  # Array to store calls
+MAX = 50
+queue_call = [None] * MAX
 front = -1
 rear = -1
 
-
 def addCall(customerID, callTime):
     global front, rear
+
     if rear == MAX - 1:
         print("Queue FULL! Cannot add more calls.")
         return
 
-    if front == -1:  # First call
+
+    if front == -1:
         front = 0
 
     rear += 1
-    call_queue[rear] = [customerID, callTime]
-    print(f"Call added: CustomerID={customerID}, CallTime={callTime} minutes.")
+    queue_call[rear] = {"customerID": customerID, "callTime": callTime}
+
+    print(f"Call added: CustomerID = {customerID}, CallTime = {callTime} mins")
+
 
 
 def answerCall():
     global front, rear
+
     if front == -1 or front > rear:
         print("No calls to answer.")
         return
 
-    print(f"Answering Call: CustomerID={call_queue[front][0]}, CallTime={call_queue[front][1]} minutes.")
+    call = queue_call[front]
+    print(f"Answered call: CustomerID = {call['customerID']}, CallTime = {call['callTime']} mins")
+
     front += 1
 
-    # Reset queue if empty
+    # Queue becomes empty
     if front > rear:
-        front = -1
-        rear = -1
+        front = rear = -1
+
 
 
 def viewQueue():
     if front == -1 or front > rear:
-        print("No pending calls.")
+        print("Queue is empty.")
         return
 
-    print("Pending Calls in Queue:")
+    print("\nPending Calls:")
     i = front
     while i <= rear:
-        print(f"CustomerID={call_queue[i][0]}, CallTime={call_queue[i][1]} minutes")
+        call = queue_call[i]
+        print(f"{i - front + 1}. CustomerID = {call['customerID']}, CallTime = {call['callTime']} mins")
         i += 1
+    print()
+
 
 
 def isQueueEmpty():
-    return front == -1 or front > rear
-
-
-while True:
-    print("1. Add Call")
-    print("2. Answer Call")
-    print("3. View Queue")
-    print("4. Check if Queue is Empty")
-    print("5. Exit")
-
-    choice = int(input("Enter your choice: "))
-
-    if choice == 1:
-        cid = input("Enter Customer ID: ")
-        time = int(input("Enter Call Time (minutes): "))
-        addCall(cid, time)
-    elif choice == 2:
-        answerCall()
-    elif choice == 3:
-        viewQueue()
-    elif choice == 4:
-        if isQueueEmpty():
-            print("Queue is EMPTY.")
-        else:
-            print("Queue is NOT EMPTY.")
-    elif choice == 5:
-        print("Exiting...")
-        break
+    if front == -1 or front > rear:
+        print("Yes, the queue is empty.")
     else:
-        print("Invalid choice! Try again.")
+        print("No, there are calls waiting in the queue.")
+
+
+
+def Menu():
+    while True:
+        print("\n---- Menu ----")
+        print("1. Add Call")
+        print("2. Answer Call")
+        print("3. View Queue")
+        print("4. Is Queue Empty?")
+        print("5. Exit")
+
+        ch = int(input("Enter your choice: "))
+
+        if ch == 1:
+            customerID = int(input("Enter Customer ID: "))
+            callTime = int(input("Enter Call Time (minutes): "))
+            addCall(customerID, callTime)
+
+        elif ch == 2:
+            answerCall()
+
+        elif ch == 3:
+            viewQueue()
+
+        elif ch == 4:
+            isQueueEmpty()
+
+        elif ch == 5:
+            print("Exiting program...")
+            break
+
+        else:
+            print("Invalid choice, try again.")
+
+
+
+if __name__ == "__main__":
+    Menu()
